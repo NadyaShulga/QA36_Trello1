@@ -1,58 +1,29 @@
 package tests;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
 import java.time.Duration;
 
-public class Login {
-   WebDriver wd;
+public class Login extends TestBase{
 
    @BeforeMethod
-    public void preConditions(){
-       wd = new ChromeDriver();
-       wd.manage().window().maximize();
-       wd.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-       wd.navigate().to("https://trello.com/");
+   public void preConditions(){
+      if(app.getUser().isLogged()){
+         app.getUser().logOut();
+      }
    }
    @Test
    public void Login1(){
-      click(By.cssSelector("[href='/login']"));
-      pause(2000);
-      type(By.cssSelector("#user"), "shulganp@gmail.com");
-      click(By.cssSelector("#login"));
-      pause(2000);
-      type(By.cssSelector("#password"), "Na:30091983");
-      click(By.cssSelector("#login-submit"));
-      pause(2000);
-     // Thread.sleep(2000); kostil
+      app.getUser().initLogin();
+      app.getUser().pause(2000);
+      app.getUser().fillInLoginForm("shulganp@gmail.com", "Na:30091983");
+      app.getUser().submitlogin();
+      app.getUser().pause(2000);
 
+      Assert.assertTrue(app.getUser().isLogged());
    }
-   public void type(By locator, String text) {
-      click(locator);
-      wd.findElement(locator).clear();
-      wd.findElement(locator).sendKeys(text);
-   }
-   public void click(By locator) {
-      wd.findElement(locator).click();
-   }
-   public void pause(int millis){
-      try{
-         Thread.sleep(millis);
-      }
-      catch (InterruptedException e){
-         e.printStackTrace();
-      }
-   }
-
-   @AfterMethod
-   public void postConditions(){
-      // wd.close();
-     //  wd.quit();
-   }
-
 }
